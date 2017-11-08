@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="css/sierra.min.css">
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="shortcut icon" href="img/favicon.png">
+  <title>Triforce Telemetry</title>
+</head>
+<body>
+
+  <div class="section background-dark">
+      <div class="container text-center">
+          <h3 class="text-huge text-white text-with-subtitle">Triforce Fight Controller</h3>
+          <h4 class="text-big text-gray">v0.1.0</h4>
+      </div>
+  </div>
+
+  <div class = "section row">
+    <div class="col-xs-12 col-md-4">
+        <h3 class="text-medium text-gray">Status</h3>
+        <div class="container background-gray">
+            <div class="section">
+                <div class="content-start">
+                  <table class="table table-responsive table-break-medium">
+                    <tr>
+                      <td><b>Connection:</b></td>
+                      <td><span id="status_box">Loading...</span></td>
+                    </tr>
+                    <tr>
+                      <td><b>Temperature:</b></td>
+                      <td><span id="temp">Unknown</span></td>
+                    </tr>
+                    <tr>
+                      <td><b>Uptime:</b></td>
+                      <td><span id="uptime">0 seconds</span></td>
+                    </tr>
+                    <tr>
+                      <td><b>Free Heap:</b></td>
+                      <td><span id="heap">0 bytes</span></td>
+                    </tr>
+                    <tr>
+                      <td><b>Status:</b></td>
+                      <td><span id="arm_status">Switched Off</span></td>
+                    </tr>
+                  </table>
+                  <canvas id="chartCanvas" width="512" height="100"></canvas>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-4">
+        <h3 class="text-medium text-gray">Rotation</h3>
+        <div class="container background-gray">
+            <div class="section">
+                <div class="content-start">
+                  <table class="table table-responsive table-break-medium">
+                    <tr>
+                      <td><b>Acceleration X</b></td>
+                      <td><span id="accel_x"></span></td>
+                      <td><b>Pitch</b></td>
+                      <td><span  id="pitch"></span></td>
+                    </tr>
+                    <tr>
+                      <td><b>Acceleration Y</b></td>
+                      <td><span id="accel_y"></span></td>
+                      <td><b>Roll</b></td>
+                      <td><span id="roll"></span></td>
+                    </tr>
+                    <tr>
+                      <td><b>Acceleration Z</b></td>
+                      <td><span id="accel_z"></span></td>
+                      <td><b>Yaw</b></td>
+                      <td><span id="yaw"></span></td>
+                  </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-4">
+        <h3 class="text-medium text-gray">Weapon</h3>
+        <div class="container background-gray">
+            <div class="section">
+                <div class="content-end">
+                  <table class="table table-responsive table-break-medium">
+                    <tr>
+                      <td><span id="weapon_1_rpm">0 RPM</span></td>
+                      <td><span id="weapon_2_rpm">0 RPM</span></td>
+                      <td><span id="weapon_3_rpm">0 RPM</span></td>
+                    </tr>
+                    <tr>
+                      <td><span id="weapon_1_voltage">0 V</span></td>
+                      <td><span id="weapon_2_voltage">0 V</span></td>
+                      <td><span id="weapon_3_voltage">0 V</span></td>
+                    </tr>
+                  </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-4">
+        <h3 class="text-medium text-gray">Drive</h3>
+        <div class="container background-gray">
+            <div class="section">
+                <div class="content-end">
+                  <table class="table table-responsive table-break-medium">
+                    <tr>
+                      <td><span id="drive_1_rpm">0 RPM</span></td>
+                      <td><span id="drive_2_rpm">0 RPM</span></td>
+                      <td><span id="drive_3_rpm">0 RPM</span></td>
+                    </tr>
+                    <tr>
+                      <td><span id="drive_1_voltage">0 V</span></td>
+                      <td><span id="drive_2_voltage">0 V</span></td>
+                      <td><span id="drive_3_voltage">0 V</span></td>
+                    </tr>
+                  </table>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="js/smoothie_min.js"></script>
+  <script>
+  var ws;
+  var retries;
+  var series = new TimeSeries();
+
+  window.onload = function() {
+    wsOpen();
+    startPolling();
+  }
+
+  function setMsg(cls, text) {
+    sbox = document.getElementById('status_box');
+    sbox.className = "alert alert-" + cls;
+    sbox.innerHTML = text;
+    console.log(text);
+  }
+
+  function startPolling() {
+    var chart = new SmoothieChart({
+      millisPerPixel:11,
+      grid:{
+        fillStyle:'#ffffff',
+        strokeStyle:'#ffffff',
+        borderVisible:false
+      },
+      labels:{
+        fillStyle:'#000000'
+      },
+      maxValue:32768,
+      minValue:0
+    });
+
+    chart.addTimeSeries(
+      series,
+      {
+        lineWidth:2,
+        strokeStyle:'#03a9f4',
+        fillStyle:'#f1f5fa'
+      }
+    );
+
+    chart.streamTo(document.getElementById("chartCanvas"), 500);
+
+    setInterval(
+      function() {
+        wsWrite('A');
+      },
+      500
+    );
+  }
+
+  function onMessage(evt) {
+    retries = 0;
+    var dv = new DataView(evt.data);
+    var val = dv.getUint16(0);
+    if (val == 0xBEEF || val == 0xDEAD) {
+      console.log("LED switched");
+    }
+  }
+
+  function wsOpen() {
+    if (ws === undefined || ws.readyState != 0) {
+      if (retries) {
+        setMsg("error", "WebSocket timeout, retrying..");
+      } else {
+        setMsg("info", "Opening WebSocket..");
+      }
+
+      ws = new WebSocket("ws://" + location.host);
+
+      ws.binaryType = 'arraybuffer';
+
+      ws.onopen = function(evt) {
+        retries = 0;
+        setMsg("done", "WebSocket is open.");
+      };
+
+      ws.onerror = function(evt) {
+        setMsg("error", "WebSocket error!");
+      };
+
+      ws.onmessage = function(evt) {
+        onMessage(evt);
+      };
+
+      wsOpenStream();
+      retries = 0;
+    }
+  }
+
+  function wsOpenStream() {
+    var uri = "/stream";
+    var ws = new WebSocket("ws://" + location.host + uri);
+
+    ws.onmessage = function(evt) {
+      console.log(evt.data);
+      var stats = JSON.parse(evt.data);
+
+      // Log free heap memory to chart
+      series.append(new Date().getTime(), parseInt(stats.heap));
+      console.log("Appending " + parseInt(stats.heap));
+
+      // Print stats to browser console
+      console.log(stats);
+
+      // Update value on web page
+      //TODO: Do this programatically with no dependance on knowing the JSON keys
+      document.getElementById('uptime').innerHTML = stats.uptime + ' seconds';
+      document.getElementById('heap').innerHTML = stats.heap + ' bytes';
+      document.getElementById('led').innerHTML = (stats.led == 1) ? 'On' : 'Off';
+      document.getElementById('drive_1_rpm').innerHTML = stats.drive_1_rpm + ' RPM';
+      document.getElementById('drive_2_rpm').innerHTML = stats.drive_2_rpm + ' RPM';
+      document.getElementById('drive_3_rpm').innerHTML = stats.drive_3_rpm + ' RPM';
+      document.getElementById('weapon_1_rpm').innerHTML = stats.weapon_1_rpm + ' RPM';
+      document.getElementById('weapon_2_rpm').innerHTML = stats.weapon_2_rpm + ' RPM';
+      document.getElementById('weapon_3_rpm').innerHTML = stats.weapon_3_rpm + ' RPM';
+      document.getElementById('accel_x').innerHTML = stats.accel_x + ' m/s/s';
+      document.getElementById('accel_y').innerHTML = stats.accel_y + ' m/s/s';
+      document.getElementById('accel_z').innerHTML = stats.accel_z + ' m/s/s';
+      document.getElementById('pitch').innerHTML = stats.pitch + ' deg';
+      document.getElementById('roll').innerHTML = stats.roll + ' deg';
+      document.getElementById('yaw').innerHTML = stats.yaw + ' deg';
+      document.getElementById('w_voltage').innerHTML = stats.w_voltage + ' volts';
+      document.getElementById('d_voltage').innerHTML = stats.d_voltage + ' volts';
+      document.getElementById('temp').innerHTML = stats.temp + ' C';
+      document.getElementById('arm_status').innerHTML = stats.arm_status;
+    };
+  }
+
+  function wsWrite(data) {
+    if (ws.readyState == 3 || retries++ > 5) {
+      wsOpen();
+    } else if (ws.readyState == 1) {
+      ws.send(data);
+    }
+  }
+  </script>
+  </body>
+</html>
