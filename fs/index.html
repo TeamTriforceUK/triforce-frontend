@@ -45,9 +45,8 @@
                       <td><span id="arm_status">Switched Off</span></td>
                     </tr>
                   </table>
-                  <canvas id="chartCanvas" width="512" height="100"></canvas>
                 </div>
-
+                <canvas id="chartCanvas" width="512" height="100"></canvas>
             </div>
         </div>
     </div>
@@ -233,21 +232,12 @@
       //TODO: Do this programatically with no dependance on knowing the JSON keys
       document.getElementById('uptime').innerHTML = stats.uptime + ' seconds';
       document.getElementById('heap').innerHTML = stats.heap + ' bytes';
-      document.getElementById('led').innerHTML = (stats.led == 1) ? 'On' : 'Off';
-      document.getElementById('drive_1_rpm').innerHTML = stats.drive_1_rpm + ' RPM';
-      document.getElementById('drive_2_rpm').innerHTML = stats.drive_2_rpm + ' RPM';
-      document.getElementById('drive_3_rpm').innerHTML = stats.drive_3_rpm + ' RPM';
-      document.getElementById('weapon_1_rpm').innerHTML = stats.weapon_1_rpm + ' RPM';
-      document.getElementById('weapon_2_rpm').innerHTML = stats.weapon_2_rpm + ' RPM';
-      document.getElementById('weapon_3_rpm').innerHTML = stats.weapon_3_rpm + ' RPM';
       document.getElementById('accel_x').innerHTML = stats.accel_x + ' m/s/s';
       document.getElementById('accel_y').innerHTML = stats.accel_y + ' m/s/s';
       document.getElementById('accel_z').innerHTML = stats.accel_z + ' m/s/s';
       document.getElementById('pitch').innerHTML = stats.pitch + ' deg';
       document.getElementById('roll').innerHTML = stats.roll + ' deg';
       document.getElementById('yaw').innerHTML = stats.yaw + ' deg';
-      document.getElementById('w_voltage').innerHTML = stats.w_voltage + ' volts';
-      document.getElementById('d_voltage').innerHTML = stats.d_voltage + ' volts';
       document.getElementById('temp').innerHTML = stats.temp + ' C';
       document.getElementById('arm_status').innerHTML = stats.arm_status;
     };
