@@ -30,19 +30,31 @@
                     </tr>
                     <tr>
                       <td><b>Temperature:</b></td>
-                      <td><span id="temp">Unknown</span></td>
+                      <td>
+                        <span id="temp-value"></span>
+                        <span id="temp-unit"></span>
+                      </td>
                     </tr>
                     <tr>
                       <td><b>Uptime:</b></td>
-                      <td><span id="uptime">0 seconds</span></td>
+                      <td>
+                        <span id="uptime-value"></span>
+                        <span id="uptime-unit"></span>
+                      </td>
                     </tr>
                     <tr>
                       <td><b>Free Heap:</b></td>
-                      <td><span id="heap">0 bytes</span></td>
+                      <td>
+                        <span id="heap-value"></span>
+                        <span id="heap-unit"></span>
+                      </td>
                     </tr>
                     <tr>
                       <td><b>Status:</b></td>
-                      <td><span id="arm_status">Switched Off</span></td>
+                      <td>
+                        <span id="arm_status-value">No data</span>
+                        <span id="arm_status-unit" style="display: none;"></span>
+                      </td>
                     </tr>
                   </table>
                 </div>
@@ -58,21 +70,39 @@
                   <table class="table table-responsive table-break-medium">
                     <tr>
                       <td><b>Acceleration X</b></td>
-                      <td><span id="accel_x"></span></td>
+                      <td>
+                        <span id="accel_x-value"></span>
+                        <span id="accel_x-unit"></span>
+                      </td>
                       <td><b>Pitch</b></td>
-                      <td><span  id="pitch"></span></td>
+                      <td>
+                        <span id="pitch-value"></span>
+                        <span id="pitch-unit"></span>
+                      </td>
                     </tr>
                     <tr>
                       <td><b>Acceleration Y</b></td>
-                      <td><span id="accel_y"></span></td>
+                      <td>
+                        <span id="accel_y-value"></span>
+                        <span id="accel_y-unit"></span>
+                      </td>
                       <td><b>Roll</b></td>
-                      <td><span id="roll"></span></td>
+                      <td>
+                        <span id="roll-value"></span>
+                        <span id="roll-unit"></span>
+                      </td>
                     </tr>
                     <tr>
                       <td><b>Acceleration Z</b></td>
-                      <td><span id="accel_z"></span></td>
+                      <td>
+                        <span id="accel_z-value"></span>
+                        <span id="accel_z-unit"></span>
+                      </td>
                       <td><b>Yaw</b></td>
-                      <td><span id="yaw"></span></td>
+                      <td>
+                        <span id="yaw-value"></span>
+                        <span id="yaw-unit"></span>
+                      </td>
                   </table>
                 </div>
             </div>
@@ -85,14 +115,32 @@
                 <div class="content-end">
                   <table class="table table-responsive table-break-medium">
                     <tr>
-                      <td><span id="weapon_1_rpm">0 RPM</span></td>
-                      <td><span id="weapon_2_rpm">0 RPM</span></td>
-                      <td><span id="weapon_3_rpm">0 RPM</span></td>
+                      <td>
+                        <span id="weapon_rpm_1-value"></span>
+                        <span id="weapon_rpm_1-unit"></span>
+                      </td>
+                      <td>
+                        <span id="weapon_rpm_2-value"></span>
+                        <span id="weapon_rpm_2-unit"></span>
+                      </td>
+                      <td>
+                        <span id="weapon_rpm_3-value"></span>
+                        <span id="weapon_rpm_3-unit"></span>
+                      </td>
                     </tr>
                     <tr>
-                      <td><span id="weapon_1_voltage">0 V</span></td>
-                      <td><span id="weapon_2_voltage">0 V</span></td>
-                      <td><span id="weapon_3_voltage">0 V</span></td>
+                      <td>
+                        <span id="weapon_voltage_1-value"></span>
+                        <span id="weapon_voltage_1-unit"></span>
+                      </td>
+                      <td>
+                        <span id="weapon_voltage_2-value"></span>
+                        <span id="weapon_voltage_2-unit"></span>
+                      </td>
+                      <td>
+                        <span id="weapon_voltage_3-value"></span>
+                        <span id="weapon_voltage_3-unit"></span>
+                      </td>
                     </tr>
                   </table>
                 </div>
@@ -106,14 +154,32 @@
                 <div class="content-end">
                   <table class="table table-responsive table-break-medium">
                     <tr>
-                      <td><span id="drive_1_rpm">0 RPM</span></td>
-                      <td><span id="drive_2_rpm">0 RPM</span></td>
-                      <td><span id="drive_3_rpm">0 RPM</span></td>
+                      <td>
+                        <span id="drive_rpm_1-value"></span>
+                        <span id="drive_rpm_1-unit"></span>
+                      </td>
+                      <td>
+                        <span id="drive_rpm_2-value"></span>
+                        <span id="drive_rpm_2-unit"></span>
+                      </td>
+                      <td>
+                        <span id="drive_rpm_3-value"></span>
+                        <span id="drive_rpm_3-unit"></span>
+                      </td>
                     </tr>
                     <tr>
-                      <td><span id="drive_1_voltage">0 V</span></td>
-                      <td><span id="drive_2_voltage">0 V</span></td>
-                      <td><span id="drive_3_voltage">0 V</span></td>
+                      <td>
+                        <span id="drive_voltage_1-value"></span>
+                        <span id="drive_voltage_1-unit"></span>
+                      </td>
+                      <td>
+                        <span id="drive_voltage_2-value"></span>
+                        <span id="drive_voltage_2-unit"></span>
+                      </td>
+                      <td>
+                        <span id="drive_voltage_3-value"></span>
+                        <span id="drive_voltage_3-unit"></span>
+                      </td>
                     </tr>
                   </table>
                 </div>
@@ -221,25 +287,21 @@
       console.log(evt.data);
       var stats = JSON.parse(evt.data);
 
-      // Log free heap memory to chart
-      series.append(new Date().getTime(), parseInt(stats.heap));
-      console.log("Appending " + parseInt(stats.heap));
-
       // Print stats to browser console
       console.log(stats);
 
       // Update value on web page
-      //TODO: Do this programatically with no dependance on knowing the JSON keys
-      document.getElementById('uptime').innerHTML = stats.uptime + ' seconds';
-      document.getElementById('heap').innerHTML = stats.heap + ' bytes';
-      document.getElementById('accel_x').innerHTML = stats.accel_x + ' m/s/s';
-      document.getElementById('accel_y').innerHTML = stats.accel_y + ' m/s/s';
-      document.getElementById('accel_z').innerHTML = stats.accel_z + ' m/s/s';
-      document.getElementById('pitch').innerHTML = stats.pitch + ' deg';
-      document.getElementById('roll').innerHTML = stats.roll + ' deg';
-      document.getElementById('yaw').innerHTML = stats.yaw + ' deg';
-      document.getElementById('temp').innerHTML = stats.temp + ' C';
-      document.getElementById('arm_status').innerHTML = stats.arm_status;
+      for(var i = 0; i < stats.length; i++) {
+        var stat = stats[i];
+        document.getElementById(stat.name + "-value").innerHTML = stat.value;
+        document.getElementById(stat.name + "-unit").innerHTML = stat.unit;
+
+        if(stat.name == "heap") {
+          // Log free heap memory to chart
+          series.append(new Date().getTime(), parseInt(stat.value));
+          console.log("Appending " + parseInt(stat.value));
+        }
+      }
     };
   }
 
